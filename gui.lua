@@ -887,11 +887,14 @@ function Lib.CreateWindow(opts: {Title: string?, Size: Vector2?, Parent: Instanc
 	end)
 
 	-- Simple notifications (compact)
-	local notifHolder = mk("Frame", {
-		BackgroundTransparency = 1,
-		Size = UDim2.fromScale(1, 1),
-		Parent = gui,
-	})
+    local notifHolder = mk("Frame", {
+        BackgroundTransparency = 1,
+        AnchorPoint = Vector2.new(1, 1),
+        Position = UDim2.fromScale(1, 1),
+        Size = UDim2.fromOffset(320, 260), 
+        Parent = gui,
+        ZIndex = 9000,
+    })
 	mk("UIPadding", {PaddingTop = UDim.new(0, 10), PaddingRight = UDim.new(0, 10), Parent = notifHolder})
 	mk("UIListLayout", {
 		HorizontalAlignment = Enum.HorizontalAlignment.Right,
