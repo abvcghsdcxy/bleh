@@ -1,7 +1,3 @@
---!strict
--- PurpleUI v2 (compact, popup dropdown on right, slider shows min/max/current)
--- Put this ModuleScript next to your LocalScript (easiest) or in ReplicatedStorage.
-
 local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
