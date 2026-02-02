@@ -4,6 +4,8 @@ local TweenService = game:GetService("TweenService")
 
 local LOCAL_PLAYER = Players.LocalPlayer
 
+local destroyCallbacks = {}
+
 type Callback<T> = (T) -> ()
 
 -- =========================
@@ -766,6 +768,15 @@ function Lib.CreateWindow(opts: {Title: string?, Size: Vector2?, Parent: Instanc
 		Parent = parent,
 	}) :: ScreenGui
 
+	gui.Destroying:Connect(function()
+		for _, cb in ipairs(destroyCallbacks) do
+			task.spawn(function()
+			    pcall(cb)
+			end)
+		end
+		table.clear(destroyCallbacks)
+   end)
+
 	local root = mk("Frame", {
 		BackgroundColor3 = Color3.new(1, 1, 1),
 		BorderSizePixel = 0,
@@ -944,8 +955,24 @@ function Lib.CreateWindow(opts: {Title: string?, Size: Vector2?, Parent: Instanc
 	end
 
 	function window:Destroy()
-		if gui then gui:Destroy() end
-	end
+	-- run exit callbacks once
+		for _, cb in ipairs(destroyCallbacks) do
+					task.spawn(function()
+						pcall(cb)
+				    end)
+		end
+		table.clear(destroyCallbacks)
+
+		if gui then
+			gui:Destroy()
+			gui = nil
+		end
+    end
+
+
+	function window:OnDestroy(cb: () -> ())
+	    table.insert(destroyCallbacks, cb)
+    end
 
 	function window:AddTab(name: string, iconText: string?)
 		iconText = iconText or "•"
