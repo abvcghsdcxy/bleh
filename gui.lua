@@ -888,14 +888,14 @@ function Lib.CreateWindow(opts: {Title: string?, Size: Vector2?, Parent: Instanc
 
 	-- Simple notifications (compact)
 	local notifHolder = mk("Frame", {
-		BackgroundTransparency = 1,
+		BackgroundTransparency = 0.1,
 		Size = UDim2.fromScale(1, 1),
 		Parent = gui,
 	})
 	mk("UIPadding", {PaddingTop = UDim.new(0, 10), PaddingRight = UDim.new(0, 10), Parent = notifHolder})
 	mk("UIListLayout", {
 		HorizontalAlignment = Enum.HorizontalAlignment.Right,
-		VerticalAlignment = Enum.VerticalAlignment.Top,
+		VerticalAlignment = Enum.VerticalAlignment.Bottom,
 		Padding = UDim.new(0, 8),
 		SortOrder = Enum.SortOrder.LayoutOrder,
 		Parent = notifHolder,
@@ -914,9 +914,9 @@ function Lib.CreateWindow(opts: {Title: string?, Size: Vector2?, Parent: Instanc
 
 		local g = addGradient(card, 0)
 		g.Transparency = NumberSequence.new({
-			NumberSequenceKeypoint.new(0, 0.78),
-			NumberSequenceKeypoint.new(1, 0.90),
-		})
+	        NumberSequenceKeypoint.new(0, 0.35),
+	        NumberSequenceKeypoint.new(1, 0.55),
+        })
 
 		local tt = label(tit, M.FontBody, 0.0, Enum.FontWeight.Bold)
 		tt.Position = UDim2.fromOffset(10, 8)
