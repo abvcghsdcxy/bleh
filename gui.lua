@@ -753,6 +753,7 @@ TabMT.__index = TabMT
 
 function Lib.CreateWindow(opts: {Title: string?, Size: Vector2?, Parent: Instance?, KeyToToggle: Enum.KeyCode?}?): Window
 	opts = opts or {}
+    local oldNotify = win.Notify
 	local titleText = opts.Title or "PurpleUI"
 	local size = opts.Size or Vector2.new(520, 320)  -- compact default
 	local parent = opts.Parent or LOCAL_PLAYER:WaitForChild("PlayerGui")
@@ -901,45 +902,34 @@ function Lib.CreateWindow(opts: {Title: string?, Size: Vector2?, Parent: Instanc
 		Parent = notifHolder,
 	})
 
-	function window:Notify(tit: string, body: string, seconds: number?)
-		seconds = seconds or 2.2
-		local card = mk("Frame", {
-			BackgroundColor3 = Theme.Surface2,
-			BorderSizePixel = 0,
-			Size = UDim2.fromOffset(240, 64),
-			Parent = notifHolder,
-		})
-		addCorner(card, 12)
-		addStroke(card, 0.75)
+    function win:Notify(title, text, duration)
+        local notif = oldNotify(self, title, text, duration)
 
-		local g = addGradient(card, 0)
-		g.Transparency = NumberSequence.new({
-			NumberSequenceKeypoint.new(0, 0.78),
-			NumberSequenceKeypoint.new(1, 0.90),
-		})
+        -- Try to reposition + restyle if UI instance is returned
+        if typeof(notif) == "Instance" then
+            notif.AnchorPoint = Vector2.new(1, 1)
+            notif.Position = UDim2.fromScale(0.98, 0.98)
 
-		local tt = label(tit, M.FontBody, 0.0, Enum.FontWeight.Bold)
-		tt.Position = UDim2.fromOffset(10, 8)
-		tt.Size = UDim2.new(1, -20, 0, 16)
-		tt.Parent = card
+            -- Make it less transparent
+            if notif:IsA("Frame") then
+                notif.BackgroundTransparency = 0.05
+            end
 
-		local bb = label(body, M.FontSmall, 0.18, Enum.FontWeight.Medium)
-		bb.Position = UDim2.fromOffset(10, 26)
-		bb.Size = UDim2.new(1, -20, 0, 34)
-		bb.TextWrapped = true
-		bb.Parent = card
+            -- Apply to children (text labels, strokes, etc.)
+            for _, v in ipairs(notif:GetDescendants()) do
+                if v:IsA("Frame") then
+                    v.BackgroundTransparency = 0.05
+                elseif v:IsA("TextLabel") or v:IsA("TextButton") then
+                    v.TextTransparency = 0
+                elseif v:IsA("UIStroke") then
+                    v.Transparency = 0
+                end
+            end
+        end
 
-		card.BackgroundTransparency = 1
-		tween(card, TweenInfo.new(0.14, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 0})
-
-		task.delay(seconds, function()
-			if not card.Parent then return end
-			tween(card, TweenInfo.new(0.14, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {BackgroundTransparency = 1})
-			task.wait(0.18)
-			if card then card:Destroy() end
-		end)
-	end
-
+        return notif
+    end
+	
 	function window:Destroy()
 		if gui then gui:Destroy() end
 	end
