@@ -888,7 +888,7 @@ function Lib.CreateWindow(opts: {Title: string?, Size: Vector2?, Parent: Instanc
 
 	-- Simple notifications (compact)
 	local notifHolder = mk("Frame", {
-		BackgroundTransparency = 0.1,
+		BackgroundTransparency = 1,
 		Size = UDim2.fromScale(1, 1),
 		Parent = gui,
 	})
